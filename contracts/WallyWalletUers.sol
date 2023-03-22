@@ -36,6 +36,21 @@ contract WallyWallet {
         return users[_walletAddress].exists;
     }
 
+    function getUserInfo(address _walletAddress)
+        public
+        view
+        returns (
+            string memory name,
+            string memory email,
+            uint256 paintLevel,
+            uint256 memoryLevel
+        )
+    {
+        require(users[_walletAddress].exists, "User does not exist.");
+        User memory user = users[_walletAddress];
+        return (user.name, user.email, user.paintLevel, user.memoryLevel);
+    }    
+
     function updateUser(
         address _walletAddress,
         string memory _newName,
