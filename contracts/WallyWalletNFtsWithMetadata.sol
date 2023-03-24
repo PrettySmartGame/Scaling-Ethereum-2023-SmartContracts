@@ -6,30 +6,36 @@ pragma solidity ^0.8.0;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
-contract WallyWalletNFT is ERC721Enumerable, Ownable {
+contract WallyWalletNFTWithMetadata is ERC721Enumerable, Ownable {
     using Strings for uint256;
 
     uint256 private _tokenIdCounter;
-    mapping(uint256 => string) private _tokenURIs;
 
-    constructor() ERC721("WallyWalletNFT", "WWNFT") {}
+    struct TokenMetadata {
+        string cid;
+        string title;
+        string subtitle;
+    }
 
-    function mintNFT(address to, string memory cid) public onlyOwner {
+    mapping(uint256 => TokenMetadata) private _tokenMetadata;
+
+    constructor() ERC721("WallyWalletNFTWM", "WNFTM") {}
+
+
+    function mintNFT(address to, string memory cid, string memory title, string memory subtitle) public onlyOwner {
         _safeMint(to, _tokenIdCounter);
-        _setTokenURI(_tokenIdCounter, cid);
+        _setTokenMetadata(_tokenIdCounter, cid, title, subtitle);
         _tokenIdCounter = _tokenIdCounter + 1;
     }
 
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
-        require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
-        _tokenURIs[tokenId] = _tokenURI;
+    function _setTokenMetadata(uint256 tokenId, string memory cid, string memory title, string memory subtitle) internal virtual {
+        require(_exists(tokenId), "ERC721Metadata: Metadata set of nonexistent token");
+        _tokenMetadata[tokenId] = TokenMetadata(cid, title, subtitle);
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-        string memory _tokenURI = _tokenURIs[tokenId];
-        return _tokenURI;
+        return _tokenMetadata[tokenId].cid;
     }
 
     function tokensOfOwner(address owner) public view returns (uint256[] memory) {
@@ -56,5 +62,16 @@ contract WallyWalletNFT is ERC721Enumerable, Ownable {
             tokenCIDs[i] = tokenURI(tokenIds[i]);
         }
         return tokenCIDs;
-    }       
+    }
+
+    function tokenMetadataOfOwner(address owner) public view returns (TokenMetadata[] memory) {
+        uint256[] memory tokenIds = tokensOfOwner(owner);
+        uint256 tokenCount = tokenIds.length;
+
+        TokenMetadata[] memory tokenMetadataList = new TokenMetadata[](tokenCount);
+        for (uint256 i = 0; i < tokenCount; i++) {
+            tokenMetadataList[i] = _tokenMetadata[tokenIds[i]];
+        }
+        return tokenMetadataList;
+    }
 }
