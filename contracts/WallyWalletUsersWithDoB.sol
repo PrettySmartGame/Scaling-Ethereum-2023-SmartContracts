@@ -7,8 +7,8 @@ contract WallyWalletUsersWithDoB {
         string name;
         string email;
         address walletAddress;
-        uint256 type1;
-        uint256 type2;
+        uint256 paintLevel;
+        uint256 memoryLevel;
         string dob;
         bool exists;
     }
@@ -19,8 +19,8 @@ contract WallyWalletUsersWithDoB {
         string memory _name,
         string memory _email,
         address _walletAddress,
-        uint256 _type1,
-        uint256 _type2,
+        uint256 _paintLevel,
+        uint256 _memoryLevel,
         string memory _dob
     ) public {
         require(!users[_walletAddress].exists, "User already exists.");
@@ -28,8 +28,8 @@ contract WallyWalletUsersWithDoB {
             name: _name,
             email: _email,
             walletAddress: _walletAddress,
-            type1: _type1,
-            type2: _type2,
+            paintLevel: _paintLevel,
+            memoryLevel: _memoryLevel,
             dob: _dob,
             exists: true
         });
@@ -43,16 +43,32 @@ contract WallyWalletUsersWithDoB {
         address _walletAddress,
         string memory _newName,
         string memory _newEmail,
-        uint256 _newType1,
-        uint256 _newType2,
+        uint256 _paintLevel,
+        uint256 _memoryLevel,
         string memory _newDob
     ) public {
         require(users[_walletAddress].exists, "User does not exist.");
         users[_walletAddress].name = _newName;
         users[_walletAddress].email = _newEmail;
-        users[_walletAddress].type1 = _newType1;
-        users[_walletAddress].type2 = _newType2;
+        users[_walletAddress].paintLevel = _paintLevel;
+        users[_walletAddress].memoryLevel = _memoryLevel;
         users[_walletAddress].dob = _newDob;
+    }
+
+    function updateUserPaintlevel(
+        address _walletAddress,
+        uint256 _paintLevel
+    ) public {
+        require(users[_walletAddress].exists, "User does not exist.");
+        users[_walletAddress].paintLevel = _paintLevel;
+    }
+
+    function updateUserMemoryLevel(
+        address _walletAddress,
+        uint256 _memoryLevel
+    ) public {
+        require(users[_walletAddress].exists, "User does not exist.");
+        users[_walletAddress].memoryLevel = _memoryLevel;
     }
 
     function deleteUser(address _walletAddress) public {
@@ -66,13 +82,14 @@ contract WallyWalletUsersWithDoB {
         returns (
             string memory name,
             string memory email,
-            uint256 type1,
-            uint256 type2,
+            uint256 paintLevel,
+            uint256 memoryLevel,
             string memory dob
         )
     {
         require(users[_walletAddress].exists, "User does not exist.");
         User memory user = users[_walletAddress];
-        return (user.name, user.email, user.type1, user.type2, user.dob);
+        return (user.name, user.email, user.paintLevel, user.memoryLevel, user.dob);
     }
+
 }
