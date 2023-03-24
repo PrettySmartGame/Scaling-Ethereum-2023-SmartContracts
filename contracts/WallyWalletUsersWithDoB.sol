@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract WallyWalletUsersWithDoB {
+    
     struct User {
         string name;
         string email;
